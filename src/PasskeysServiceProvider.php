@@ -11,8 +11,10 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\View;
 use Livewire\Livewire;
+use MarcelWeidum\Passkeys\Http\Controllers\PasskeyRedirectController;
 use MarcelWeidum\Passkeys\Livewire\Passkeys as LivewirePasskeys;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -67,22 +69,25 @@ final class PasskeysServiceProvider extends PackageServiceProvider
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
-            fn (): View => view('filament-passkeys::login'),
+            static fn (): View => view('filament-passkeys::login'),
         );
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::SIMPLE_PAGE_END,
-            fn (): View => view('filament-passkeys::profile'),
+            static fn (): View => view('filament-passkeys::profile'),
             scopes: EditProfile::class,
         );
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_END,
-            fn (): View => view('filament-passkeys::profile'),
+            static fn (): View => view('filament-passkeys::profile'),
             scopes: EditProfile::class,
         );
 
         Livewire::component('filament-passkeys', LivewirePasskeys::class);
+
+        // Register Passkey Auth Route
+        Route::get('passkey/auth/{panelId}', PasskeyRedirectController::class)->name('passkey.auth');
     }
 
     protected function getAssetPackageName(): string
