@@ -23,6 +23,11 @@ final class PasskeyRedirectController extends BaseController
             throw new NotFoundHttpException();
         }
 
+        // Use the tenant redirect route instead of getUrl
+        if ($panel->hasTenancy()) {
+            return redirect()->intended(route("filament.$panelId.tenant"));
+        }
+
         return redirect()->intended($panel->getUrl());
     }
 }
